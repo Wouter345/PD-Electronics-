@@ -1,5 +1,5 @@
 clear
-% close all
+close all
 
 
 %% Settings
@@ -7,7 +7,7 @@ clear
 % baseband modeling parameters
 use_fec = false; % enable/disable forward error correction
 bt = 0.5; % gaussian filter bandwidth
-snr = 200; % in-band signal to noise ratio (dB)
+snr = 20; % in-band signal to noise ratio (dB)
 osr = 16; % oversampling ratio
 
 % RF modeling parameters
@@ -22,7 +22,7 @@ plot_raw_data = true;
 plot_rf_signal = false;
 
 % input message
-message_in = 'Hello';
+message_in = 'Yeet,Skeet,Repeat';
 
 
 %% Modulation
@@ -87,8 +87,9 @@ else
     plain_out = encoded_out;
 end
 
+ber = BER(plain_in, plain_out)*100 %in percent
 % varicode decoding
-message_out = varicode_decode(plain_out);
+message_out = varicode_decode(plain_out)
 
 
 %% Plotting

@@ -1,0 +1,11 @@
+
+
+NCO: https://zipcpu.com/dsp/2017/12/09/nco.html
+PLL: https://zipcpu.com/dsp/2017/12/14/logic-pll.html
+
+
+SINE WAVE PRODUCTION:
+	Phase units on FPGA: https://zipcpu.com/dsp/2017/06/15/no-pi-for-you.html
+	Simple Sine Wave generator: https://zipcpu.com/dsp/2017/07/11/simplest-sinewave-generator.html
+	CORDIC: https://zipcpu.com/dsp/2017/08/30/cordic.html
+		testbench: https://zipcpu.com/dsp/2017/10/02/cordic-tb.html
