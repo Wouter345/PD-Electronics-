@@ -2,10 +2,10 @@ clear all
 close all
 % For decimation, having the CIC filtering before taking every other sample
 D = 2; % decimation factor
-N = 10; % delay buffer depth
+N = 64; % delay buffer depth
 delayBuffer = zeros(1,N); % init
 intOut = 0;
-xn = sin(2*pi*[0:.1:10]);
+xn = sin(2*pi*[0:.1:100]);
 y6n = [];
 for ii = 1:length(xn)
 % comb section
@@ -24,10 +24,10 @@ y6n = y6n(1:D:end); % taking every other sample – decimation
 % integrator section first, decimate, then the comb stage
 % Gain : Reduced the delay buffer depth of comb section from N to N/D
 D = 2; % decimation factor
-N = 10; % delay buffer depth
+N = 64; % delay buffer depth
 delayBuffer = zeros(1,N/D);
 intOut = 0;
-xn = sin(2*pi*[0:.1:10]); % input
+xn = sin(2*pi*[0:.1:100]); % input
 y7n = []; % output
 for ii = 1:length(xn)
 % integrator
@@ -43,4 +43,6 @@ end
 
 end
 err67 = y6n - y7n;
-err67dB = 10*log10(err67*err67'/length(err67))
+err67dB = 10*log10(err67*err67'/length(err67));
+
+

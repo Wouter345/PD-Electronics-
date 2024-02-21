@@ -3,6 +3,8 @@
 NCO: https://zipcpu.com/dsp/2017/12/09/nco.html
 PLL: https://zipcpu.com/dsp/2017/12/14/logic-pll.html
 
+CIC: https://dsplog.com/2007/07/01/example-of-cascaded-integrator-comb-filter-in-matlab/
+
 
 SINE WAVE PRODUCTION:
 	Phase units on FPGA: https://zipcpu.com/dsp/2017/06/15/no-pi-for-you.html
