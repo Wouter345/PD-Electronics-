@@ -22,7 +22,7 @@ plot_raw_data = false;
 plot_rf_signal = false;
 
 % input message
-message_in = 'Yeet,Skeet,Repeat';
+message_in = 'Yeet,Skeet,Repeat,and skeet once again';
 
 
 %% Modulation
@@ -103,7 +103,7 @@ if plot_raw_data
     time_in = ((1 : numel(raw_in))' - 1) / osr;
     time_out = ((1 : numel(raw_out))' - 1) / osr;
     h = plot(time_in, raw_in, '-', ...
-             time_out, raw_out, '-', ...
+             time_out, raw_out./max(raw_out), '-', ...
              clock_out, encoded_out * 2 - 1, 'sk');
     set(h, {'MarkerFaceColor'}, get(h, 'Color')); 
     grid();

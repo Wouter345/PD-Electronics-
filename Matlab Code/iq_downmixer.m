@@ -20,6 +20,7 @@ for i=1:length(signal)
     Q = signal(i)*sinwave(i);
     upsampled_envelope(i) = I+1j*Q;
     
+    % increment phase value
     phase = phase + 2^16 * fc/fs; % increment phase by 2^16 * fc/fs = 20480 angle units
     if phase > 2^16 % implement rollover, only necessary in matlab
         phase = phase - 2^16;

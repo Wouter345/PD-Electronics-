@@ -27,7 +27,8 @@ for i = 1:length(I)
     phase(i) = cordicArctan(Q(i), I(i));
 end
 
-% UNWRAPPING, does not quite work yet, the rest works perfectly tho
+% UNWRAPPING, works but is slow, can be better, potentially by doing a
+% check in the derivator
 angle_range = 2^16;
 for i = 2:length(phase)    
     d = phase(i) - phase(i-1);
@@ -41,8 +42,11 @@ for i = 2:length(phase)
     end
 end
 
-% derivative 
-raw = diff(phase);
+% DERIVATOR
+raw = [];
+for i = 1:length(phase)-1
+   raw(i) = phase(i+1) - phase(i); 
+end
 
 
 end
