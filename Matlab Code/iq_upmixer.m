@@ -12,4 +12,16 @@ upsampled_envelope = interp1(t1, complex_envelope, t2);
 % IQ upmixer
 signal = real(exp(1j * 2 * pi * fc * t2) .* upsampled_envelope);
 
+% % Compute the FFT of the signal
+% N = length(real(complex_envelope));
+% Y = fft(real(complex_envelope));
+% Y_single_sided = Y(1:N/2+1);
+% f = (0:N/2) * 1600 / N;
+% % Plot the magnitude of the single-sided FFT
+% figure
+% plot(f, abs(Y_single_sided));
+% xlabel('Frequency (Hz)');
+% ylabel('Magnitude');
+% title('Frequency Response of the Signal');
+
 end

@@ -28,6 +28,6 @@ for i = 2:length(split_vector)-1
     t = [t,find(table==split_vector{i})-1];
 end 
 message = char(t);
-% message = 'Not implemented yet';
+
 
 end

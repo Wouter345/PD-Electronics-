@@ -4,6 +4,7 @@ NCO: https://zipcpu.com/dsp/2017/12/09/nco.html
 PLL: https://zipcpu.com/dsp/2017/12/14/logic-pll.html
 
 CIC: https://dsplog.com/2007/07/01/example-of-cascaded-integrator-comb-filter-in-matlab/
+Compensation filter: https://cdrdv2-public.intel.com/653906/an455.pdf
 
 
 SINE WAVE PRODUCTION:
