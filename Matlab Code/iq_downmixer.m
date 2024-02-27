@@ -1,38 +1,39 @@
 function complex_envelope = iq_downmixer(signal, osr, br, fc, fs)
 
-% TODO: Mixer needs to be implemented with CORDIC algorithm
+% TODO: 
 % DONE: CIC Downsampling filter, 1 stage
+%       Mixer implemented with CORDIC algorithm
 
-% IQ downmixer
-t = ((1 : numel(signal))' - 1) / fs;
-upsampled_envelope2 = 2 * exp(-1j * 2 * pi * fc * t) .* signal;
 
 % IQ downmixer
 upsampled_envelope = []; %output
 sinwave = []; 
 coswave = [];
-phase = 0;
+phase = 0; % initialize phase value
 for i=1:length(signal)
     [sinwave(i), coswave(i)] = cordicSinCos(phase); %generate sin and cos waves
-    sinwave(i) = sinwave(i)./13491; % normalize
-    coswave(i) = coswave(i)./13491;
-    I = signal(i)*2*coswave(i); % perform multiplication
-    Q = signal(i)*2*sinwave(i);
+    
+    % normalizing not strictly necessary.
+%     sinwave(i) = sinwave(i)./13491; 
+%     coswave(i) = coswave(i)./13491;
+    I = signal(i)*coswave(i); % perform multiplication
+    Q = signal(i)*sinwave(i);
     upsampled_envelope(i) = I+1j*Q;
-    phase = phase + 20480; % increment phase by 2^16 * fc/fs = 20480 angle units
+    
+    phase = phase + 2^16 * fc/fs; % increment phase by 2^16 * fc/fs = 20480 angle units
     if phase > 2^16 % implement rollover, only necessary in matlab
         phase = phase - 2^16;
     end
     
 end
-upsampled_envelope = upsampled_envelope';
+upsampled_envelope = upsampled_envelope'; 
 
 %CIC DOWNSAMPLING FILTER 
 I_signal = real(upsampled_envelope);
 Q_signal = imag(upsampled_envelope);
 
 D = fs / (br*osr); %Decimation factor, NEEDS TO BE AN INTEGER
-N = 40; % delay buffer depth
+N = D*1;
 delayBufferI = zeros(1,N/D);
 delayBufferQ = zeros(1,N/D);
 intOutI = 0;
@@ -51,9 +52,9 @@ for i = 1:length(I_signal)
         combOutI = intOutI - delayBufferI(end);
         combOutQ = intOutQ - delayBufferQ(end);
         
-        % for normalizing the filter, not strictly necesarry
-        combOutI = combOutI / (N);
-        combOutQ = combOutQ / (N);
+%         % for normalizing the filter, not strictly necesarry
+%         combOutI = combOutI / (N);
+%         combOutQ = combOutQ / (N);
         
         % Shift delay buffer
         delayBufferI(2:end) = delayBufferI(1:end-1);

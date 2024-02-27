@@ -1,35 +1,30 @@
 function complex_envelope = iq_downmixer(signal, osr, br, fc, fs)
 
-% TODO: Mixer needs to be implemented with CORDIC algorithm
+% TODO: 
 % DONE: CIC Downsampling filter, 1 stage
-
-
-
-% IQ downmixer
-t = ((1 : numel(signal))' - 1) / fs;
-waves = 2 * exp(-1j * 2 * pi * fc * t);
-upsampled_envelope = 2 * exp(-1j * 2 * pi * fc * t) .* signal;
+%       Mixer implemented with CORDIC algorithm
 
 % IQ downmixer
-upsampled_envelope2 = [];
-sin = [];
-cos = [];
-phase = 0;
-phaselist = [];
+upsampled_envelope = []; %output
+sinwave = []; 
+coswave = [];
+phase = 0; % initialize phase value
 for i=1:length(signal)
-    phaselist(i) = phase; % inc
-    [sin(i), cos(i)] = cordicSinCos(phase);
-%     I = signal(i)*cos;
-%     Q = signal(i)*sin;
-%     upsampled_envelope2(i) = I+1j*Q;
-    phase = phase + 20480;
-    if phase > 2^16
+    [sinwave(i), coswave(i)] = cordicSinCos(phase); %generate sin and cos waves
+    
+    % normalizing not strictly necessary.
+%     sinwave(i) = sinwave(i)./13491; 
+%     coswave(i) = coswave(i)./13491;
+    I = signal(i)*coswave(i); % perform multiplication
+    Q = signal(i)*sinwave(i);
+    upsampled_envelope(i) = I+1j*Q;
+    phase = phase + 20480; % increment phase by 2^16 * fc/fs = 20480 angle units
+    if phase > 2^16 % implement rollover, only necessary in matlab
         phase = phase - 2^16;
     end
     
 end
-upsampled_envelope2 = upsampled_envelope2';
-upsampled_envelope2 = upsampled_envelope2./13491;
+upsampled_envelope = upsampled_envelope';
 
 %CIC DOWNSAMPLING FILTER 
 I_signal = real(upsampled_envelope);
@@ -83,17 +78,17 @@ h = [ -0.0004 -0.0030 -0.0050 -0.0059 -0.0047 -0.0011 0.0048 0.0114 0.0158 0.015
 I_downsampled = conv(I_downsampled,h,'same');
 Q_downsampled = conv(Q_downsampled,h,'same');
 
-% Compute the FFT of the signal
-N = length(I_downsampled);
-Y = fft(I_downsampled);
-Y_single_sided = Y(1:N/2+1);
-f = (0:N/2) * 1600 / N;
-% Plot the magnitude of the single-sided FFT
-figure
-plot(f, abs(Y_single_sided));
-xlabel('Frequency (Hz)');
-ylabel('Magnitude');
-title('Frequency Response of the Signal');
+% % Compute the FFT of the signal
+% N = length(I_downsampled);
+% Y = fft(I_downsampled);
+% Y_single_sided = Y(1:N/2+1);
+% f = (0:N/2) * 1600 / N;
+% % Plot the magnitude of the single-sided FFT
+% figure
+% plot(f, abs(Y_single_sided));
+% xlabel('Frequency (Hz)');
+% ylabel('Magnitude');
+% title('Frequency Response of the Signal');
 
 
 % Combine to get complex envelope

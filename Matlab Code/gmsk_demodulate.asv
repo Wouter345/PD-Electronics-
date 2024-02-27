@@ -19,30 +19,34 @@ complex_envelope = conv(complex_envelope, filt, 'same');
 % complex_envelope = conv(complex_envelope, h, 'same');
 
 
+
+% extract phase
+phase1 = unwrap(angle(complex_envelope));
+
 % CORDIC ARCTAN
 I = real(complex_envelope);
 Q = imag(complex_envelope);
 phase = [];
 for i = 1:length(I)
-    phase(i) = cordicArctan(Q(i), I(i));
+    phase(i) = cordicArctan(I(i), Q(i));
 end
 
-% UNWRAPPING, does not quite work yet, the rest works perfectly tho
 angle_range = 2^16;
-for i = 2:length(phase)    
-    d = phase(i) - phase(i-1);
-    while d > angle_range/2
-        phase(i) = phase(i) - (angle_range);
-        d = phase(i) - phase(i-1);
-    end
-    while d < -angle_range/2
-        phase(i) = phase(i) + (angle_range);
-        d = phase(i) - phase(i-1);
+for i = 2:length(phase)
+    d = phase_wrappe(i) - phase_wrapped(i-1);
+    if d > angle_range/2
+        unwrapped(i) = phase_wrapped(i) - (angle_range);
+    elseif d < -angle_range/2
+        unwrapped(i) = phase_wrapped(i) + (angle_range);
+    else
+        unwrapped(i) = phase_wrapped(i);
     end
 end
 
-% derivative 
-raw = diff(phase);
-
+raw = diff(unwrapped);
+% 
+% % calculate derivative
+% raw = diff(phase) * osr / (0.5 * pi); 
+% %raw = diff(phase); %this also works
 
 end
