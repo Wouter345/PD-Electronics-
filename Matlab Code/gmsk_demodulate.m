@@ -8,7 +8,7 @@ I_signal = real(complex_envelope);
 Q_signal = imag(complex_envelope);
 
 
-% apply a simple filter
+%% apply a simple filter
 filt = ones(osr / 2 + 1);
 filt =  filt / sum(filt);
 complex_envelope = conv(complex_envelope, filt, 'same');
@@ -19,7 +19,7 @@ complex_envelope = conv(complex_envelope, filt, 'same');
 % complex_envelope = conv(complex_envelope, h, 'same');
 
 
-% CORDIC ARCTAN
+%% CORDIC ARCTAN
 I = real(complex_envelope);
 Q = imag(complex_envelope);
 phase = [];
@@ -27,25 +27,37 @@ for i = 1:length(I)
     phase(i) = cordicArctan(Q(i), I(i));
 end
 
-% UNWRAPPING, works but is slow, can be better, potentially by doing a
-% check in the derivator
-angle_range = 2^16;
-for i = 2:length(phase)    
-    d = phase(i) - phase(i-1);
-    while d > angle_range/2
-        phase(i) = phase(i) - (angle_range);
-        d = phase(i) - phase(i-1);
-    end
-    while d < -angle_range/2
-        phase(i) = phase(i) + (angle_range);
-        d = phase(i) - phase(i-1);
-    end
-end
+%% UNWRAPPING, works but is slow, can be better, potentially by doing a check in the derivator
+% angle_range = 2^16;
+% for i = 2:length(phase)    
+%     d = phase(i) - phase(i-1);
+%     while d > angle_range/2
+%         phase(i) = phase(i) - (angle_range);
+%         d = phase(i) - phase(i-1);
+%     end
+%     while d < -angle_range/2
+%         phase(i) = phase(i) + (angle_range);
+%         d = phase(i) - phase(i-1);
+%     end
+% end
 
-% DERIVATOR
+%% DERIVATOR
+angle_range = 2^16;
 raw = [];
-for i = 1:length(phase)-1
-   raw(i) = phase(i+1) - phase(i); 
+for i = 2:length(phase)
+    
+    % calculate difference between consecutive points
+    d = phase(i) - phase(i-1);
+
+    % check for wrapping jumps and adjust difference
+    if d > angle_range/2
+       d = d - angle_range;
+    elseif d < -angle_range/2
+       d = d + angle_range;
+    end
+
+
+    raw(i) = d; 
 end
 
 

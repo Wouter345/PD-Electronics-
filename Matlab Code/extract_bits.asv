@@ -13,19 +13,14 @@ for i = 2:length(signal)
 %         symbols(index) = signal(i);
 %         index = index + 1;
 %     end
-
-
       new_symbol = new_symbol + signal(i);
       counter = counter + 1;
       if clock(i) < clock(i-1)
-          symbols(index) = new_symbol ./ counter;
-          index = index + 1;
-          counter = 1;
-          new_symbol = 0;
+          symbols(index) = new_symbol / counter;
+          index = index 
       end
-end
-symbols(index) = new_symbol ./ counter;
 
+end
 symbols = symbols';
 
 

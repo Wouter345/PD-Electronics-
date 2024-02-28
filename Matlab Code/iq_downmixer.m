@@ -5,7 +5,7 @@ function complex_envelope = iq_downmixer(signal, osr, br, fc, fs)
 %       Mixer implemented with CORDIC algorithm
 
 
-% IQ downmixer
+%% IQ downmixer
 upsampled_envelope = []; %output
 sinwave = []; 
 coswave = [];
@@ -29,7 +29,7 @@ for i=1:length(signal)
 end
 upsampled_envelope = upsampled_envelope'; 
 
-%CIC DOWNSAMPLING FILTER 
+%% CIC DOWNSAMPLING FILTER 
 I_signal = real(upsampled_envelope);
 Q_signal = imag(upsampled_envelope);
 
@@ -70,7 +70,7 @@ for i = 1:length(I_signal)
     
 end
 
-%%%%% Compensation filter
+%% Compensation filter
 
 % order 16
 h = [ -0.0176 -0.0242 -0.0249 0.0219 0.1598 0.3956 0.6775 0.9099 1.0000 0.9099 0.6775 0.3956 0.1598 0.0219 -0.0249 -0.0242 -0.0176 ];
@@ -94,6 +94,6 @@ Q_downsampled = conv(Q_downsampled,h,'same');
 % title('Frequency Response of the Signal');
 
 
-% Combine to get complex envelope
+%%  Combine to get complex envelope
 complex_envelope = I_downsampled + 1i*Q_downsampled;
 end

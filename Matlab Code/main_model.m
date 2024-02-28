@@ -7,7 +7,7 @@ close all
 % baseband modeling parameters
 use_fec = false; % enable/disable forward error correction
 bt = 0.5; % gaussian filter bandwidth
-snr = 100; % in-band signal to noise ratio (dB)
+snr = 30; % in-band signal to noise ratio (dB)
 osr = 16; % oversampling ratio
 
 % RF modeling parameters
@@ -22,7 +22,7 @@ plot_raw_data = false;
 plot_rf_signal = false;
 
 % input message
-message_in = 'Yeet,Skeet,Repeat,and skeet once again';
+message_in = 'hello';
 
 
 %% Modulation
@@ -59,17 +59,17 @@ end
 
 
 %% Demodulation
-
+fc = 20000;
 if use_rf
     
-    % automatic gain control
-    signal_agc = agc_gain(signal_out);
-    
     % quantization
-    signal_quantized = quantize(signal_agc, adc_levels);
+    signal_quantized = quantize(signal_out);
     
+    % automatic gain control
+    signal_agc = agc_gain(signal_quantized(1:640), signal_quantized);
+
     % downmixing
-    complex_envelope_out = iq_downmixer(signal_quantized, osr, br, fc, fs);
+    complex_envelope_out = iq_downmixer(signal_agc, osr, br, fc, fs);
     
 end
 
@@ -89,9 +89,11 @@ else
     plain_out = encoded_out;
 end
 
-ber = BER(plain_in, plain_out)*100 %in percent
+
 % varicode decoding
 message_out = varicode_decode(plain_out)
+
+ber = BER(plain_in, plain_out(end-length(plain_in)+1:end))*100 %in percent
 
 
 %% Plotting
