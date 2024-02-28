@@ -15,7 +15,7 @@ for i = 2:length(signal)
 %     end
 
 
-      new_symbol = new_symbol + signal(i);
+      new_symbol = (new_symbol + signal(i));
       counter = counter + 1;
       if clock(i) < clock(i-1)
           symbols(index) = new_symbol ./ counter;

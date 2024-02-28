@@ -1,17 +1,18 @@
 % %%%%%%%%%%%
 % This script generates the filter coef. for a compensation filter after the CIC filter.
+%%%AN 455: Understanding CIC Compensation Filters%%%
 % %%%%%%%%%%%
 
 
 %%%%%% CIC filter parameters %%%%%%
-R = 32; %% Decimation factor
-M = 2; %% Differential delay
+R = 40; %% Decimation factor
+M = 1; %% Differential delay
 N = 1; %% Number of stages
-B = 18; %% Coeffi. Bit-width
-Fs = 51200; %% (High) Sampling freq in Hz before decimation
-Fc = 150; %% Pass band edge in Hz
+B = 6; %% Coeffi. Bit-width
+Fs = 64000; %% (High) Sampling freq in Hz before decimation
+Fc = 100; %% Pass band edge in Hz
 %%%%%%% fir2.m parameters %%%%%%
-L = 64; %% Filter order; must be even
+L = 16; %% Filter order; must be even
 Fo = R*Fc/Fs; %% Normalized Cutoff freq; 0<Fo<=0.5/M;
 %% outside the pass band
 %%%%%%% CIC Compensator Design using fir2.m %%%%%%
@@ -31,7 +32,7 @@ fvtool(h)
 
 
 % Print coefficients
-formatSpec = '%.4f '; % Format specifier for 4 decimal places
+formatSpec = '%.2f '; % Format specifier for 4 decimal places
 fprintf('[ ');
-fprintf(formatSpec, h);
+fprintf(formatSpec, hz);
 fprintf(']\n');

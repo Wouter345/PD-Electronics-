@@ -39,7 +39,7 @@ for i = 2:length(phase)
     end
 end
 
-
+plot(phase)
 %% DERIVATOR
 angle_range = 2^16;
 raw = [];
