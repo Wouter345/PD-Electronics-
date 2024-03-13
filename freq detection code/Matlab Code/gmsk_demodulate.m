@@ -4,12 +4,15 @@ function raw = gmsk_demodulate(complex_envelope, osr)
 % lots of things that can be improved!
 % TIP: Search for demodulation methods online. Are you going for the
 % coherent or incoherent approach?
+I_signal = real(complex_envelope);
+Q_signal = imag(complex_envelope);
 
 
 %% apply a simple filter
-% filt = ones(osr / 2 + 1);
-% filt =  filt / sum(filt);
-% complex_envelope = conv(complex_envelope, filt, 'same');
+filt = ones(osr / 2 + 1);
+filt =  filt / sum(filt);
+complex_envelope = conv(complex_envelope, filt, 'same');
+fvtool(filt);
 
 
 % % apply low pass filter 
@@ -39,7 +42,6 @@ for i = 2:length(phase)
     end
 end
 
-plot(phase)
 %% DERIVATOR
 angle_range = 2^16;
 raw = [];

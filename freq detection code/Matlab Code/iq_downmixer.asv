@@ -1,4 +1,4 @@
-function complex_envelope = iq_downmixer(signal, osr, br, fc, fs)
+function complex_envelope = iq_downmixer(signal, osr, br, fc, fs, deviation)
 
 % TODO: 
 % DONE: CIC Downsampling filter, 1 stage
@@ -9,31 +9,37 @@ function complex_envelope = iq_downmixer(signal, osr, br, fc, fs)
 upsampled_envelope = []; %output
 sinwave = []; 
 coswave = [];
-phase = 0; % initialize phase value
+% phase = 0; % initialize phase value
+
+phase = NCOControl(deviation, length(signal));
 for i=1:length(signal)
-    
-    
-    
-    
-    [sinwave(i), coswave(i)] = cordicSinCos(phase); %generate sin and cos waves
-    
+    [sinwave(i), coswave(i)] = cordicSinCos(phase(i)); %generate sin and cos waves
     % normalizing not strictly necessary.
-%     sinwave(i) = sinwave(i)./13491; 
-%     coswave(i) = coswave(i)./13491;
+    sinwave(i) = floor(sinwave(i)./(2^13)); 
+    coswave(i) = floor(coswave(i)./(2^13));
+    
     I = signal(i)*coswave(i); % perform multiplication
     Q = signal(i)*sinwave(i);
+    
     upsampled_envelope(i) = I+1j*Q;
-    
-    % increment phase value
-    if (sinwave(i) > 0) & 
-    
-    
-    phase = phase + 2^16 * fc/fs; % increment phase by 2^16 * fc/fs = 20480 angle units
-    if phase > 2^16 % implement rollover, only necessary in matlab
-        phase = phase - 2^16;
-    end
-    
 end
+% for i=1:length(signal)
+%     [sinwave(i), coswave(i)] = cordicSinCos(phase); %generate sin and cos waves
+% 
+%     % normalizing not strictly necessary.
+% %     sinwave(i) = sinwave(i)./13491; 
+% %     coswave(i) = coswave(i)./13491;
+%     I = signal(i)*coswave(i); % perform multiplication
+%     Q = signal(i)*sinwave(i);
+%     upsampled_envelope(i) = I+1j*Q;
+% 
+%     % increment phase value
+%     phase = phase + 2^16 * fc/fs; % increment phase by 2^16 * fc/fs = 20480 angle units
+%     if phase > 2^16 % implement rollover, only necessary in matlab
+%         phase = phase - 2^16;
+%     end
+% 
+% end
 upsampled_envelope = upsampled_envelope'; 
 
 %% CIC DOWNSAMPLING FILTER 
@@ -45,6 +51,7 @@ N = D*1;
 delayBufferI = zeros(1,N/D);
 delayBufferQ = zeros(1,N/D);
 intOutI = 0;
+intOutIlist = [0];
 intOutQ = 0;
 I_downsampled = [];
 Q_downsampled = [];
@@ -53,6 +60,7 @@ for i = 1:length(I_signal)
     % integrator
     intOutI = intOutI + I_signal(i);
     intOutQ = intOutQ + Q_signal(i);
+    intOutIlist(i) = intOutI;
 
     % Decimator
     if mod(i,D)==1
@@ -93,8 +101,6 @@ end
 
 % order 16, cutoff 100hz, 6 bits
 h = [ -1.0000 -0.0000 1.0000 5.0000 10.0000 17.0000 24.0000 29.0000 31.0000 29.0000 24.0000 17.0000 10.0000 5.0000 1.0000 -0.0000 -1.0000 ];
-
-
 I_downsampled = conv(I_downsampled,h,'same');
 Q_downsampled = conv(Q_downsampled,h,'same');
 
