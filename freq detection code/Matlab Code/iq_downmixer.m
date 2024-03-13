@@ -84,6 +84,9 @@ for i = 1:length(I_signal)
     end
     
 end
+% save('input.txt', 'I_signal', '-ascii');
+% I_downsampled = I_downsampled';
+% save('output.txt', 'I_downsampled', '-ascii');
 
 %% Compensation filter
 

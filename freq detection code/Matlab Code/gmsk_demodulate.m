@@ -12,7 +12,7 @@ Q_signal = imag(complex_envelope);
 filt = ones(osr / 2 + 1);
 filt =  filt / sum(filt);
 complex_envelope = conv(complex_envelope, filt, 'same');
-fvtool(filt);
+
 
 
 % % apply low pass filter 
